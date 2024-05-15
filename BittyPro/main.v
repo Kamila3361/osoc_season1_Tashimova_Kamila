@@ -1,54 +1,62 @@
 module main(
 	/* verilator lint_off UNUSED */
-	input  reg [15:0] inst,
+	input wire [15:0] instruction,
 	/* verilator lint_on UNUSED */
-	input  reg [15:0] reg0,
-        input  reg [15:0] reg1,
-        input  reg [15:0] reg2,
-        input  reg [15:0] reg3,
-        input  reg [15:0] reg4,
-        input  reg [15:0] reg5,
-        input  reg [15:0] reg6,
-        input  reg [15:0] reg7,
-	output reg [15:0] out,
-	output reg        cout,
-	output reg        comp
+	input wire clk,
+	input wire reset,	
+	output wire done,
+	output wire [15:0] reg_0, reg_1, reg_2, reg_3, reg_4, reg_5, reg_6, reg_7, reg_C
 );
-reg [3:0] sel;
-reg mode;
-reg [2:0] mux_sel1, mux_sel2;
 
-controlunit unit1 (inst, 1'b1, sel, mode, mux_sel1);
-controlunit unit2 (inst, 1'b0, sel, mode, mux_sel2);
+wire [15:0] inst, reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, regS, regC, mux_out;
+wire [3:0] sel;
+/* verilator lint_off UNUSED */
+wire cout, comp;
+/* verilator lint_on UNUSED */
+wire mode, S_enable, C_enable;
+wire [2:0] mux_sel;
+wire [7:0] reg_enable;
 
-reg [15:0] A, B;
+Reg Inst (instruction, clk, reset, 1'b1, inst);
 
-always @(*) begin
-        case(mux_sel1)
-                3'd0: A = reg0;
-                3'd1: A = reg1;
-                3'd2: A = reg2;
-                3'd3: A = reg3;
-                3'd4: A = reg4;
-                3'd5: A = reg5;
-                3'd6: A = reg6;
-                3'd7: A = reg7;
-        endcase
-end
+controlunit cu (inst, clk, reset, sel, mode, mux_sel, reg_enable, S_enable, C_enable, done);
 
-always @(*) begin
-        case(mux_sel2)
-                3'd0: B = reg0;
-                3'd1: B = reg1;
-                3'd2: B = reg2;
-                3'd3: B = reg3;
-                3'd4: B = reg4;
-                3'd5: B = reg5;
-                3'd6: B = reg6;
-                3'd7: B = reg7;
-        endcase
-end
+mux mx (
+        reg0,
+        reg1,
+	reg2,
+        reg3,
+        reg4,
+        reg5,
+        reg6,
+        reg7,
+        mux_sel,
+        mux_out
+);
 
-alu alu1(.carry_in(1'b0), .in_a(A), .in_b(B), .select(sel), .mode(mode), .carry_out(cout), .compare(comp), .alu_out(out));
+Reg RegS (mux_out, clk, S_enable, reset, regS);
+
+wire [15:0] regCval;
+alu Alu (1'b0, regS, mux_out, sel, mode, cout, comp, regCval);
+Reg RegC (regCval, clk, C_enable, reset, regC);
+
+Reg Reg0 (regC, clk, reset, reg_enable[0], reg0);
+Reg Reg1 (regC, clk, reset, reg_enable[1], reg1);
+Reg Reg2 (regC, clk, reset, reg_enable[2], reg2);
+Reg Reg3 (regC, clk, reset, reg_enable[3], reg3);
+Reg Reg4 (regC, clk, reset, reg_enable[4], reg4);
+Reg Reg5 (regC, clk, reset, reg_enable[5], reg5);
+Reg Reg6 (regC, clk, reset, reg_enable[6], reg6);
+Reg Reg7 (regC, clk, reset, reg_enable[7], reg7);
+
+assign reg_0 = reg0;
+assign reg_1 = reg1;
+assign reg_2 = reg2;
+assign reg_3 = reg3;
+assign reg_4 = reg4;
+assign reg_5 = reg5;
+assign reg_6 = reg6;
+assign reg_7 = reg7;
+assign reg_C = regC;
 
 endmodule
