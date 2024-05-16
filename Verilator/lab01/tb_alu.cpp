@@ -6,7 +6,7 @@
 #include <verilated_vcd_c.h>
 #include "Valu.h"
 
-#define MAX_SIM_TIME 5000
+#define MAX_SIM_TIME 1000000
 #define VERIF_START_TIME 7
 vluint64_t sim_time = 0;
 
@@ -90,85 +90,159 @@ class AluScb{
 			if(in->m == 0){
 				switch(in->sel){
 					case 0:
-						if(tx->out != 1){
+						if(tx->out != uint16_t(in->a + in->cin)){
 							std::cout << std::endl;
                         				std::cout << "AluScb: arithmetic 0" << std::endl;
-                        				std::cout << "  Expected: alu_out = 1" << std::endl; 
-                                  			std::cout << "  Actual: " << tx->out << std::endl;
+                        				std::cout << "  Expected:" << uint16_t(in->a + in->cin) 
+                                  				 << "  Actual: " << tx->out << std::endl;
                         				std::cout << "  Simtime: " << sim_time << std::endl;
 						}
 						break;
 					case 1:
-						if(tx->out != uint16_t(in->a - 1 - in->cin)){
+						if(tx->out != uint16_t((in->a & in->b) + in->cin)){
                                                         std::cout << std::endl;
                                                         std::cout << "AluScb: arithmetic 1" << std::endl;
-                                                        std::cout << "  Expected: " << uint16_t(in->a - 1 - in->cin) 
+                                                        std::cout << "  Expected: " << uint16_t((in->a & in->b) + in->cin) 
                                                         	 << "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
                                                 break;
 					case 2:
-						if(tx->out != uint16_t(in->a + in->b + in->cin)){
+						if(tx->out != uint16_t((in->a & ~in->b) + in->cin)){
                                                         std::cout << std::endl;
                                                         std::cout << "AluScb: arithmetic 2" << std::endl;
-                                                        std::cout << "  Expected: " << uint16_t(in->a + in->b + in->cin) 
+                                                        std::cout << "  Expected: " << uint16_t((in->a & ~in->b) + in->cin) 
                                                         	<< "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
                                                 break;
 					case 3:
-						if(tx->out != uint16_t(in->a - in->b - in->cin)){
+						if(tx->out != uint16_t(-1 + in->cin)){
                                                         std::cout << std::endl;
                                                         std::cout << "AluScb: arithmetic 3" << std::endl;
-                                                        std::cout << "  Expected: " << uint16_t(in->a - in->b - in->cin)
+                                                        std::cout << "  Expected: " << uint16_t(-1 + in->cin)
                                                         	 << "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
                                                 break;
 					case 4:
-						if(tx->out != uint16_t((in->a * in->b) - 1)){
+						if(tx->out != uint16_t((in->a & (in->a | ~in->b)) + in->cin)){
                                                         std::cout << std::endl;
                                                         std::cout << "AluScb: arithmetic 4" << std::endl;
-                                                        std::cout << "  Expected: " << uint16_t((in->a * in->b) - 1)
+                                                        std::cout << "  Expected: " << uint16_t((in->a & (in->a | ~in->b)) + in->cin)
                                                         		<< "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
                                                 break;
 					case 5:
-						if(tx->out != uint16_t((in->a * ~in->b) - 1)){
+						if(tx->out != uint16_t((in->a & in->b) + (in->a | ~in->b) + in->cin)){
                                                         std::cout << std::endl;
                                                         std::cout << "AluScb: arithmetic 5" << std::endl;
-                                                        std::cout << "  Expected: " << uint16_t((in->a * ~in->b) - 1)
+                                                        std::cout << "  Expected: " << uint16_t((in->a & in->b) + (in->a | ~in->b) + in->cin)
                                                         		<< "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
                                                 break;
 					case 6:
-						if(tx->out != uint16_t(in->a + in->a + in->cin)){
+						if(tx->out != uint16_t(in->a - in->b - 1 + in->cin)){
                                                         std::cout << std::endl;
+                                                        std::cout<<in->a<<" "<<in->b<<" "<<in->cin<<std::endl;
                                                         std::cout << "AluScb: arithmetic 6" << std::endl;
-                                                        std::cout << "  Expected: " << uint16_t(in->a + in->a + in->cin)
+                                                        std::cout << "  Expected: " << uint16_t(in->a - in->b - 1 + in->cin)
                                                         		<< "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
                                                 break;
 					case 7:
-						if(tx->out != uint16_t(in->a + 1 + in->cin)){
+						if(tx->out != uint16_t((in->a | ~in->b) - 1 + in->cin)){
                                                         std::cout << std::endl;
+                                                        std::cout<<in->a<<" "<<in->b<<" "<<in->cin<<std::endl;
                                                         std::cout << "AluScb: arithmetic 7" << std::endl;
-                                                        std::cout << "  Expected: " << uint16_t(in->a + 1 + in->cin)
+                                                        std::cout << "  Expected: " << uint16_t((in->a | ~in->b) - 1 + in->cin)
                                                         		 << "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
                                                 break;
+					case 8:
+                                                if(tx->out != uint16_t(in->a + (in->a | in->b) + in->cin)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: arithmetic 8" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t(in->a + (in->a | in->b) + in->cin)
+                                                                        << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+                                        case 9:
+                                                if(tx->out != uint16_t(in->a + in->b + in->cin)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: arithmetic 9" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t(in->a + in->b + in->cin)
+                                                                        << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+                                        case 10:
+                                                if(tx->out != uint16_t((in->a & ~in->b) + (in->a | in->b) + in->cin)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: arithmetic 10" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t((in->a & ~in->b) + (in->a | in->b) + in->cin)
+                                                                         << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+					case 11:
+                                                if(tx->out != uint16_t((in->a | in->b) - 1 + in->cin)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: arithmetic 11" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t((in->a | in->b) - 1 + in->cin)
+                                                                        << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+                                        case 12:
+                                                if(tx->out != uint16_t(in->a + in->a + in->cin)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: arithmetic 12" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t(in->a + in->a + in->cin)
+                                                                        << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+                                        case 13:
+                                                if(tx->out != uint16_t((in->a & in->b) + in->a + in->cin)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: arithmetic 13" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t((in->a & in->b) + in->a + in->cin)
+                                                                         << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+					case 14:
+                                                if(tx->out != uint16_t((in->a & ~in->b) + in->a + in->cin)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: arithmetic 14" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t((in->a & ~in->b) + in->a + in->cin)
+                                                                        << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+                                        case 15:
+                                                if(tx->out != uint16_t(in->a - 1 + in->cin)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: arithmetic 15" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t(in->a - 1 + in->cin)
+                                                                        << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;                                      
 				}
 			} else if(in->m == 1){
 				switch(in->sel){
 					case 0:
-						if(tx->out != uint16_t(in->a & in->b)){
+						if(tx->out != uint16_t(~in->a)){
                                                         std::cout << std::endl;
                                                         std::cout << "AluScb: logic 0" << std::endl;
-                                                        std::cout << "  Expected: " << uint16_t(in->a & in->b)
+                                                        std::cout << "  Expected: " << uint16_t(~in->a)
                                                         	<< "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
@@ -183,56 +257,128 @@ class AluScb{
                                                 }
                                                 break;
 					case 2:
-						if(tx->out != uint16_t(in->a | in->b)){
+						if(tx->out != uint16_t(~in->a | in->b)){
                                                         std::cout << std::endl;
                                                         std::cout << "AluScb: logic 2" << std::endl;
-                                                        std::cout << "  Expected: " << uint16_t(in->a | in->b)
+                                                        std::cout << "  Expected: " << uint16_t(~in->a | in->b)
                                                         	<< "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
                                                 break;
 					case 3:
-						if(tx->out != uint16_t(~(in->a | in->b))){
+						if(tx->out != uint16_t(0)){
                                                         std::cout << std::endl;
                                                         std::cout << "AluScb: logic 3" << std::endl;
-                                                        std::cout << "  Expected: " << uint16_t(~(in->a | in->b))
+                                                        std::cout << "  Expected: " << uint16_t(0)
                                                         	<< "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
                                                 break;
 					case 4:
-						if(tx->out != uint16_t(in->a ^ in->b)){
+						if(tx->out != uint16_t(~(in->a | in->b))){
                                                         std::cout << std::endl;
                                                         std::cout << "AluScb: logic 4" << std::endl;
-                                                        std::cout << "  Expected: " << uint16_t(in->a ^ in->b)
+                                                        std::cout << "  Expected: " << uint16_t(~(in->a | in->b))       
                                                         	 << "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
                                                 break;
 					case 5:
-						if(tx->out != uint16_t(in->a & ~in->b)){
+						if(tx->out != uint16_t(~in->b)){
                                                         std::cout << std::endl;
                                                         std::cout << "AluScb: logic 5" << std::endl;
-                                                        std::cout << "  Expected: " << uint16_t(in->a & ~in->b)
+                                                        std::cout << "  Expected: " << uint16_t(~in->b)
                                                         	 << "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
                                                 break;
 					case 6:
-						if(tx->out != uint16_t(in->a | ~in->b)){
+						if(tx->out != uint16_t(in->a ^ in->b)){
                                                         std::cout << std::endl;
                                                         std::cout << "AluScb: logic 6" << std::endl;
-                                                        std::cout << "  Expected: " << uint16_t(in->a | ~in->b)
+                                                        std::cout << "  Expected: " << uint16_t(in->a ^ in->b)
                                                         	 << "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
                                                 break;
 					case 7:
-						if(tx->out != (uint16_t(~(in->a)))){
+						if(tx->out != uint16_t(in->a | ~in->b)){
                                                         std::cout << std::endl;
                                                         std::cout << "AluScb: logic 7" << std::endl;
-                                                        std::cout << "  Expected: " << (uint16_t(~(in->a)))
+                                                        std::cout << "  Expected: " << uint16_t(in->a | ~in->b)
                                                         	<< "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+					case 8:
+                                                if(tx->out != uint16_t(~in->a & in->b)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: logic 8" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t(~in->a & in->b)
+                                                                 << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+                                        case 9:
+                                                if(tx->out != uint16_t(~(in->a ^ in->b))){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: logic 9" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t(~(in->a ^ in->b))
+                                                                 << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+                                        case 10:
+                                                if(tx->out != uint16_t(in->b)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: logic 10" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t(in->b)
+                                                                << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+					case 11:
+                                                if(tx->out != uint16_t(in->a | in->b)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: logic 11" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t(in->a | in->b)
+                                                                 << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+                                        case 12:
+                                                if(tx->out != uint16_t(1)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: logic 6" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t(1)
+                                                                 << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+                                        case 13:
+                                                if(tx->out != uint16_t(in->a & ~in->b)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: logic 7" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t(in->a & ~in->b)
+                                                                << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+					case 14:
+                                                if(tx->out != uint16_t(in->a & in->b)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: logic 14" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t(in->a & in->b)
+                                                                 << "  Actual: " << tx->out << std::endl;
+                                                        std::cout << "  Simtime: " << sim_time << std::endl;
+                                                }
+                                                break;
+                                        case 15:
+                                                if(tx->out != uint16_t(in->a)){
+                                                        std::cout << std::endl;
+                                                        std::cout << "AluScb: logic 15" << std::endl;
+                                                        std::cout << "  Expected: " << uint16_t(in->a)
+                                                                << "  Actual: " << tx->out << std::endl;
                                                         std::cout << "  Simtime: " << sim_time << std::endl;
                                                 }
                                                 break;
