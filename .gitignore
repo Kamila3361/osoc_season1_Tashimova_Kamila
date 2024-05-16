@@ -1,5 +1,5 @@
 */obj_dir
 .stamp.verilate
 *.vcd
-/draft
+*/draft
 .vscode
