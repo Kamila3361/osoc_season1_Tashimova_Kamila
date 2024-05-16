@@ -4,11 +4,130 @@
 #include <bitset>
 #include <verilated.h>
 #include <verilated_vcd_c.h>
-#include "Vmain.h"
+#include "Vtop.h"
 
-#define MAX_SIM_TIME 500000
+#define MAX_SIM_TIME 100
 #define VERIF_START_TIME 7
 vluint64_t sim_time = 0;
+
+class BittyPro
+{
+public:
+        uint16_t alu(uint16_t sel, uint16_t mode, uint16_t a, uint16_t b)
+        {
+                uint16_t out;
+                if(mode == 0)
+                {
+                        switch(sel)
+                        {
+                                case 0: 
+                                        out = uint16_t(a); 
+                                        break;
+                                case 1: 
+                                        out = uint16_t(a & b);
+                                        break;
+                                case 2:
+                                        out = uint16_t(a & ~b);
+                                        break;
+                                case 3: 
+                                        out = uint16_t(-1); 
+                                        break;
+                                case 4: 
+                                        out = uint16_t(a & (a | ~b));
+                                        break;
+                                case 5:
+                                        out = uint16_t((a & b) + (a | ~b));
+                                        break;
+                                case 6: 
+                                        out = uint16_t(a - b - 1); 
+                                        break;
+                                case 7: 
+                                        out = uint16_t((a | ~b) - 1);
+                                        break;
+                                case 8:
+                                        out = uint16_t(a + (a | b));
+                                        break;
+                                case 9: 
+                                        out = uint16_t(a + b); 
+                                        break;
+                                case 10: 
+                                        out = uint16_t((a & ~b) + (a | b));
+                                        break;
+                                case 11:
+                                        out = uint16_t((a | b) - 1);
+                                        break;
+                                case 12: 
+                                        out = uint16_t(a + a); 
+                                        break;
+                                case 13: 
+                                        out = uint16_t((a & b) + a);
+                                        break;
+                                case 14:
+                                        out = uint16_t((a & ~b) + a);
+                                        break;
+                                case 15:
+                                        out = uint16_t(a - 1);
+                                        break;
+                        }
+                }
+                if(mode == 1)
+                {
+                        switch(sel)
+                        {
+                                case 0: 
+                                        out = uint16_t(~a); 
+                                        break;
+                                case 1: 
+                                        out = uint16_t(~(a & b));
+                                        break;
+                                case 2:
+                                        out = uint16_t(~a | b);
+                                        break;
+                                case 3: 
+                                        out = uint16_t(0); 
+                                        break;
+                                case 4: 
+                                        out = uint16_t(~(a | b));
+                                        break;
+                                case 5:
+                                        out = uint16_t(~b);
+                                        break;
+                                case 6: 
+                                        out = uint16_t(a ^ b); 
+                                        break;
+                                case 7: 
+                                        out = uint16_t(a | ~b);
+                                        break;
+                                case 8:
+                                        out = uint16_t(~a & b);
+                                        break;
+                                case 9: 
+                                        out = uint16_t(~(a ^ b)); 
+                                        break;
+                                case 10: 
+                                        out = uint16_t(b);
+                                        break;
+                                case 11:
+                                        out = uint16_t(a | b);
+                                        break;
+                                case 12: 
+                                        out = uint16_t(1); 
+                                        break;
+                                case 13: 
+                                        out = uint16_t(a & ~b);
+                                        break;
+                                case 14:
+                                        out = uint16_t(a & b);
+                                        break;
+                                case 15:
+                                        out = uint16_t(a);
+                                        break;
+                        }
+                }
+                return out;
+        }
+};
+
 
 class AluInTx{
 	public:
@@ -41,9 +160,9 @@ AluInTx* generator(){
 
 class AluDrv {
 	private:
-		Vmain* dut;
+		Vtop* dut;
 	public:
-		AluDrv (Vmain* dut){
+		AluDrv (Vtop* dut){
 			this->dut = dut;
 		}
 
@@ -161,10 +280,10 @@ class AluScb{
 
 class AluInMon{
 	private:
-		Vmain* dut;
+		Vtop* dut;
 		AluScb* scb;
 	public:
-		AluInMon(Vmain* dut, AluScb* scb){
+		AluInMon(Vtop* dut, AluScb* scb){
 			this->dut = dut;
 			this->scb = scb;
 		}
@@ -178,10 +297,10 @@ class AluInMon{
 
 class AluOutMon{
 	private:
-		Vmain* dut;
+		Vtop* dut;
 		AluScb* scb;
 	public:
-		AluOutMon(Vmain* dut, AluScb* scb){
+		AluOutMon(Vtop* dut, AluScb* scb){
 			this->dut = dut;
 			this->scb = scb;
 		}
@@ -203,7 +322,7 @@ class AluOutMon{
 };
 
 /*
-void dut_reset (Vmain *dut, vluint64_t &sim_time){
+void dut_reset (Vtop *dut, vluint64_t &sim_time){
     dut->rst = 0;
     if(sim_time >= 3 && sim_time < 6){
         dut->rst = 1;
@@ -213,7 +332,7 @@ void dut_reset (Vmain *dut, vluint64_t &sim_time){
 
 
 int main(int argc, char** argv, char** env) {
-    Vmain *dut = new Vmain;
+    Vtop *dut = new Vtop;
 
     Verilated::traceEverOn(true);
     VerilatedVcdC *m_trace = new VerilatedVcdC;
@@ -229,7 +348,6 @@ int main(int argc, char** argv, char** env) {
     int state = -1;
 
     while (sim_time < MAX_SIM_TIME) {
-        dut->clk ^= 1;
         dut->eval();
 
         // Do all the driving/monitoring on a positive edge
@@ -244,7 +362,7 @@ int main(int argc, char** argv, char** env) {
                 // which drives the input interface based on the info in the
                 // transaction item
                 drv->drive(tx);
-
+                
                 // Monitor the input interface
                 inMon->monitor();
 
@@ -252,6 +370,7 @@ int main(int argc, char** argv, char** env) {
                 outMon->monitor();
             }
         }  
+        dut->clk ^= 1;
         // end of positive edge processing
         m_trace->dump(sim_time);
         sim_time++;

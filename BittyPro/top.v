@@ -1,4 +1,4 @@
-module main(
+module top(
 	/* verilator lint_off UNUSED */
 	input wire [15:0] instruction,
 	/* verilator lint_on UNUSED */

@@ -1,4 +1,4 @@
-MODULE=main
+MODULE=top
 
 .PHONY:sim
 sim: waveform.vcd
