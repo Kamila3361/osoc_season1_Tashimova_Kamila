@@ -14,15 +14,15 @@ vluint64_t sim_time = 0;
 class AluInTx
 {
 public:
-    uint32_t inst;	
+    uint16_t inst;	
 }; //Transaction Item
 
 class AluOutTx
 {
 public:
-    uint32_t done;
-    uint32_t regOutputs[8];		
-    uint32_t regC;				
+    uint16_t done;
+    uint16_t regOutputs[8];		
+    uint16_t regC;				
 };
 
 AluInTx* generator()
@@ -77,24 +77,25 @@ public:
         in_q.pop_front();
 		
         BittyProc bittyProc;
-        uint32_t out = bittyProc.Evaluate(in->inst);
+        uint16_t out = bittyProc.Evaluate(in->inst);
         
-        uint32_t sel = (in->inst >> 2) & 0b1111;
-        uint32_t mode =  (in->inst >> 1) & 1;
-        uint32_t mux_sel1 = (in->inst >> 13) & 0b111;
-        uint32_t mux_sel2 = (in->inst >> 10) & 0b111;
+        uint16_t sel = (in->inst >> 2) & 0b1111;
+        uint16_t mode =  (in->inst >> 1) & 1;
+        uint16_t mux_sel1 = (in->inst >> 13) & 0b111;
+        uint16_t mux_sel2 = (in->inst >> 10) & 0b111;
 
         
         if(out != tx->regC)
         {
             std::cout << std::endl;
+            std::cout << "sel: " << sel << "mode: " << mode << std::endl;
             std::cout << "MainScb: out != regC" << std::endl;
             std::cout << "  Expected: " << out
                    << "  Actual: " << tx->regC << std::endl;
             std::cout << "  Simtime: " << sim_time << std::endl;
         }
 
-        for(uint32_t i = 0; i < 8; i++)
+        for(int i = 0; i < 8; i++)
         {
             if(bittyProc.GetRegister(i) != tx->regOutputs[i])
             {
@@ -183,15 +184,15 @@ int main(int argc, char** argv, char** env) {
     AluScb    *scb    = new AluScb();
     AluInMon  *inMon  = new AluInMon(dut, scb);
     AluOutMon *outMon = new AluOutMon(dut, scb);
-    int state = -1;
+    int state = -2;    
 
     while (sim_time < MAX_SIM_TIME) {
-        
+        dut->clk ^= 1;       
+        dut->eval(); 
         // Do all the driving/monitoring on a positive edge
-        if (dut->clk == 1){
-		state = (state + 1) % 3;
-
-            if (state == 2 && sim_time >= VERIF_START_TIME) {
+        if (dut->clk == 1){	
+            state = (state + 1) % 3;
+            if (sim_time >= VERIF_START_TIME) {
                 // Generate a randomized transaction item of type AluInTx
                 tx = generator();
 
@@ -202,17 +203,16 @@ int main(int argc, char** argv, char** env) {
 
                 // Monitor the input interface
                 inMon->monitor();
-
-                // Monitor the output interface
-                outMon->monitor();
+                
+                if(state == 2) {            
+                    // Monitor the output interface
+                    outMon->monitor();
+                }              
             }
         }  
-        dut->clk ^= 1;
         // end of positive edge processing
         m_trace->dump(sim_time);
         sim_time++;
-
-        dut->eval();        
     }
 
     m_trace->close();

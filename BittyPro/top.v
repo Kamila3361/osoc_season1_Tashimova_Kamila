@@ -40,14 +40,14 @@ wire [15:0] regCval;
 alu Alu (1'b0, regS, mux_out, sel, mode, cout, comp, regCval);
 Reg RegC (regCval, clk, C_enable, reset, regC);
 
-Reg Reg0 (regC, clk, reset, reg_enable[0], reg0);
-Reg Reg1 (regC, clk, reset, reg_enable[1], reg1);
-Reg Reg2 (regC, clk, reset, reg_enable[2], reg2);
-Reg Reg3 (regC, clk, reset, reg_enable[3], reg3);
-Reg Reg4 (regC, clk, reset, reg_enable[4], reg4);
-Reg Reg5 (regC, clk, reset, reg_enable[5], reg5);
-Reg Reg6 (regC, clk, reset, reg_enable[6], reg6);
-Reg Reg7 (regC, clk, reset, reg_enable[7], reg7);
+Reg Reg0 (regC, clk, reg_enable[0], reset, reg0);
+Reg Reg1 (regC, clk, reg_enable[1], reset, reg1);
+Reg Reg2 (regC, clk, reg_enable[2], reset, reg2);
+Reg Reg3 (regC, clk, reg_enable[3], reset, reg3);
+Reg Reg4 (regC, clk, reg_enable[4], reset, reg4);
+Reg Reg5 (regC, clk, reg_enable[5], reset, reg5);
+Reg Reg6 (regC, clk, reg_enable[6], reset, reg6);
+Reg Reg7 (regC, clk, reg_enable[7], reset, reg7);
 
 assign reg_0 = reg0;
 assign reg_1 = reg1;

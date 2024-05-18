@@ -17,6 +17,7 @@ reg [2:0] state;
 always @(posedge clk) begin 
     if(reset) begin 
         state <= 0;
+        done <= 0;
     end else begin 
         case(state)
             0: begin
@@ -26,25 +27,28 @@ always @(posedge clk) begin
                 S_enable <= 1;
                 reg_enable <= 0;
                 C_enable <= 0;
-                state <= 1;								
+                done <= 0; 
+                state <= 1;
             end
             1: begin
                 mux_sel <= inst[12:10];
                 S_enable <= 0;
                 reg_enable <= 0;
                 C_enable <= 1;
-                state <= 2;				
-            end
+                done <= 0;
+                state <= 2;
+            end             
             2: begin 
                 reg_enable[inst[15:13]] <= 1;
                 S_enable <= 0;
                 C_enable <= 0;
+                done <= 1;
                 state <= 0;
             end
         endcase
     end
 end
 
-assign done = (state == 2);
+//assign done = (state == 2);
 
 endmodule
