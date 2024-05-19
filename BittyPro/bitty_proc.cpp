@@ -2,19 +2,21 @@
 #include "bitty_proc.h"
 
 BittyProc::BittyProc():
-    registers( std::vector<uint32_t>(8))
+    registers( std::vector<uint16_t>(8))
 { }
 
-uint32_t BittyProc::Evaluate(uint32_t instruction)
+uint16_t BittyProc::Evaluate(uint16_t instruction)
 {
-    uint32_t sel = (instruction >> 2) & 0b1111;
-    uint32_t mode =  (instruction >> 1) & 1;
-    uint32_t mux_sel1 = (instruction >> 13) & 0b111;
-    uint32_t mux_sel2 = (instruction >> 10) & 0b111;
-    uint32_t a = registers[mux_sel1];
-    uint32_t b = registers[mux_sel2];
-    
-    uint32_t out;
+    uint16_t sel = (instruction >> 2) & 0b1111;
+    uint16_t mode =  (instruction >> 1) & 1;
+    uint16_t mux_sel1 = (instruction >> 13) & 0b111;
+    uint16_t mux_sel2 = (instruction >> 10) & 0b111;
+    uint16_t a = registers[mux_sel1];
+    uint16_t b = registers[mux_sel2];
+
+    std::cout<<"mux_sel1: "<< mux_sel1 << " a: " << a << " b: " << b <<std::endl;    
+            
+    uint16_t out;
     if(mode == 0)
     {
         switch(sel)
@@ -124,10 +126,11 @@ uint32_t BittyProc::Evaluate(uint32_t instruction)
         }
     }
     registers[mux_sel1] = out;
+    std::cout<<"mux_sel1: " << mux_sel1 << " registers[mux_sel1]: " << registers[mux_sel1] << std::endl;
     return out;
 }
 
-uint32_t BittyProc::GetRegister(uint32_t reg_num)
+uint16_t BittyProc::GetRegister(int reg_num)
 {
     return registers[reg_num];    
 }

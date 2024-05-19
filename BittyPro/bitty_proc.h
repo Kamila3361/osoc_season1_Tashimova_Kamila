@@ -8,11 +8,11 @@ class BittyProc
 {
 public:
 	BittyProc();
-	uint32_t Evaluate(uint32_t instruction);
-	uint32_t GetRegister(uint32_t reg_num);
+	uint16_t Evaluate(uint16_t instruction);
+	uint16_t GetRegister(int reg_num);
 
 private:
-	std::vector<uint32_t> registers;
+	std::vector<uint16_t> registers;
 };
 
 #endif
