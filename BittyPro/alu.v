@@ -17,7 +17,7 @@ always @(*) begin
         5'b10000: out = ~in_a;         
         5'b10001: out = ~(in_a & in_b);                            
         5'b10010: out = ~(in_a) | in_b;                            
-        5'b10011: out = 16'b0000000000000000;
+        5'b10011: out = 16'd0;
         5'b10100: out = ~(in_a | in_b);                              
         5'b10101: out = ~in_b;                                  
         5'b10110: out = in_a ^ in_b;                               
@@ -26,7 +26,7 @@ always @(*) begin
         5'b11001: out = ~(in_a ^ in_b);                              
         5'b11010: out = in_b;                                   
         5'b11011: out = in_a | in_b;                              
-        5'b11100: out = 16'b1111111111111111;                                   
+        5'b11100: out = 16'd1;                                   
         5'b11101: out = in_a & ~in_b;                               
         5'b11110: out = in_a & in_b;                             
         5'b11111: out = in_a;
