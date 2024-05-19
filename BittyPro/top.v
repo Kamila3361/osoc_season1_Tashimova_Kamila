@@ -13,13 +13,14 @@ wire [3:0] sel;
 /* verilator lint_off UNUSED */
 wire cout, comp;
 /* verilator lint_on UNUSED */
-wire mode, S_enable, C_enable;
+wire mode, S_enable, C_enable, inst_enable;
 wire [2:0] mux_sel;
 wire [7:0] reg_enable;
+wire [15:0] regCval;
 
-Reg Inst (instruction, clk, 1'b1, reset, inst);
+Reg Inst (instruction, clk, inst_enable, reset, inst);
 
-controlunit cu (inst, clk, reset, sel, mode, mux_sel, reg_enable, S_enable, C_enable, done);
+controlunit cu (inst, clk, reset, sel, mode, mux_sel, reg_enable, S_enable, C_enable, inst_enable, done);
 
 mux mx (
     reg0,
@@ -36,7 +37,6 @@ mux mx (
 
 Reg RegS (mux_out, clk, S_enable, reset, regS);
 
-wire [15:0] regCval;
 alu Alu (1'b0, regS, mux_out, sel, mode, cout, comp, regCval);
 Reg RegC (regCval, clk, C_enable, reset, regC);
 
