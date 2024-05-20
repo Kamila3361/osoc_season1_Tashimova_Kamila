@@ -4,8 +4,7 @@ module top(
     /* verilator lint_on UNUSED */
     input wire clk,
     input wire reset,	
-    output wire done,
-    output wire [15:0] reg_0, reg_1, reg_2, reg_3, reg_4, reg_5, reg_6, reg_7, reg_C
+    output wire done
 );
 
 wire [15:0] inst, reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, regS, regC, mux_out;
@@ -40,6 +39,9 @@ Reg RegS (mux_out, clk, S_enable, reset, regS);
 alu Alu (1'b0, regS, mux_out, sel, mode, cout, comp, regCval);
 Reg RegC (regCval, clk, C_enable, reset, regC);
 
+//Verification
+verifBox verification(clk, regCval, inst, C_enable);
+
 Reg Reg0 (regC, clk, reg_enable[0], reset, reg0);
 Reg Reg1 (regC, clk, reg_enable[1], reset, reg1);
 Reg Reg2 (regC, clk, reg_enable[2], reset, reg2);
@@ -48,15 +50,5 @@ Reg Reg4 (regC, clk, reg_enable[4], reset, reg4);
 Reg Reg5 (regC, clk, reg_enable[5], reset, reg5);
 Reg Reg6 (regC, clk, reg_enable[6], reset, reg6);
 Reg Reg7 (regC, clk, reg_enable[7], reset, reg7);
-
-assign reg_0 = reg0;
-assign reg_1 = reg1;
-assign reg_2 = reg2;
-assign reg_3 = reg3;
-assign reg_4 = reg4;
-assign reg_5 = reg5;
-assign reg_6 = reg6;
-assign reg_7 = reg7;
-assign reg_C = regC;
 
 endmodule
