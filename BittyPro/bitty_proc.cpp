@@ -14,8 +14,6 @@ uint16_t BittyProc::Evaluate(uint16_t instruction)
     uint16_t a = registers[mux_sel1];
     uint16_t b = registers[mux_sel2];
 
-    std::cout<<"mux_sel1: "<< mux_sel1 << " a: " << a << " b: " << b <<std::endl;    
-            
     uint16_t out;
     if(mode == 0)
     {
@@ -25,46 +23,46 @@ uint16_t BittyProc::Evaluate(uint16_t instruction)
                 out = uint16_t(a);
                 break;
             case 1:
-                out = uint16_t(a & b);
+                out = uint16_t(a | b);
                 break;
             case 2:
-                out = uint16_t(a & ~b);
+                out = uint16_t(a | ~b);
                 break;
             case 3:
                 out = uint16_t(-1);
                 break;
             case 4:
-                out = uint16_t(a & (a | ~b));
+                out = uint16_t(a | (a & ~b));
                 break;
             case 5:
-                out = uint16_t((a & b) + (a | ~b));
+                out = uint16_t((a | b) + (a & ~b));
                 break;
             case 6:
                 out = uint16_t(a - b - 1);
                 break;
             case 7:
-                out = uint16_t((a | ~b) - 1);
+                out = uint16_t((a & ~b) - 1);
                 break;
             case 8:
-                out = uint16_t(a + (a | b));
+                out = uint16_t(a + (a & b));
                 break;
             case 9:
                 out = uint16_t(a + b);
                 break;
             case 10:
-                out = uint16_t((a & ~b) + (a | b));
+                out = uint16_t((a | ~b) + (a & b));
                 break;
             case 11:
-                out = uint16_t((a | b) - 1);
+                out = uint16_t((a & b) - 1);
                 break;
             case 12:
                 out = uint16_t(a + a);
                 break;
             case 13:
-                out = uint16_t((a & b) + a);
+                out = uint16_t((a | b) + a);
                 break;
             case 14:
-                out = uint16_t((a & ~b) + a);
+                out = uint16_t((a | ~b) + a);
                 break;
             case 15:
                 out = uint16_t(a - 1);
@@ -79,16 +77,16 @@ uint16_t BittyProc::Evaluate(uint16_t instruction)
                 out = uint16_t(~a);
                 break;
             case 1:
-                out = uint16_t(~(a & b));
+                out = uint16_t(~(a | b));
                 break;
             case 2:
-                out = uint16_t(~a | b);
+                out = uint16_t(~a & b);
                 break;
             case 3:
                 out = uint16_t(0);
                 break;
             case 4:
-                out = uint16_t(~(a | b));
+                out = uint16_t(~(a & b));
                 break;
             case 5:
                 out = uint16_t(~b);
@@ -97,10 +95,10 @@ uint16_t BittyProc::Evaluate(uint16_t instruction)
                 out = uint16_t(a ^ b);
                 break;
             case 7:
-                out = uint16_t(a | ~b);
+                out = uint16_t(a & ~b);
                 break;
             case 8:
-                out = uint16_t(~a & b);
+                out = uint16_t(~a | b);
                 break;
             case 9:
                 out = uint16_t(~(a ^ b));
@@ -109,16 +107,16 @@ uint16_t BittyProc::Evaluate(uint16_t instruction)
                 out = uint16_t(b);
                 break;
             case 11:
-                out = uint16_t(a | b);
+                out = uint16_t(a & b);
                 break;
             case 12:
                 out = uint16_t(1);
                 break;
             case 13:
-                out = uint16_t(a & ~b);
+                out = uint16_t(a | ~b);
                 break;
             case 14:
-                out = uint16_t(a & b);
+                out = uint16_t(a | b);
                 break;
             case 15:
                 out = uint16_t(a);
@@ -126,7 +124,6 @@ uint16_t BittyProc::Evaluate(uint16_t instruction)
         }
     }
     registers[mux_sel1] = out;
-    std::cout<<"mux_sel1: " << mux_sel1 << " registers[mux_sel1]: " << registers[mux_sel1] << std::endl;
     return out;
 }
 
