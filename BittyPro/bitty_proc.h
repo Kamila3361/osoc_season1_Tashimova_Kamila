@@ -1,5 +1,5 @@
-#ifndef SORTING_
-#define SORTING_
+#ifndef BITTY_PROC_H_
+#define BITTY_PROC_H_
 
 #include <iostream>
 #include <vector>
@@ -12,7 +12,7 @@ public:
 	uint16_t GetRegister(int reg_num);
 
 private:
-	std::vector<uint16_t> registers;
+	std::vector<uint16_t> registers_;
 };
 
 #endif

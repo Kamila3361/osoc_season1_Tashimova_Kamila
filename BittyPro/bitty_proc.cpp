@@ -1,8 +1,12 @@
+// C++ libraries.
+#include <cassert>
 #include <iostream>
+
+// Local libraries.
 #include "bitty_proc.h"
 
 BittyProc::BittyProc():
-    registers( std::vector<uint16_t>(8))
+    registers_( std::vector<uint16_t>(8))
 { }
 
 uint16_t BittyProc::Evaluate(uint16_t instruction)
@@ -11,10 +15,13 @@ uint16_t BittyProc::Evaluate(uint16_t instruction)
     uint16_t mode =  (instruction >> 1) & 1;
     uint16_t mux_sel1 = (instruction >> 13) & 0b111;
     uint16_t mux_sel2 = (instruction >> 10) & 0b111;
-    uint16_t a = registers[mux_sel1];
-    uint16_t b = registers[mux_sel2];
+    uint16_t a = registers_[mux_sel1];
+    uint16_t b = registers_[mux_sel2];
 
     uint16_t out;
+
+    // Mode can only be 0 or 1 according to the spec.
+    assert(mode < 2);
     if(mode == 0)
     {
         switch(sel)
@@ -69,7 +76,7 @@ uint16_t BittyProc::Evaluate(uint16_t instruction)
                 break;
         }
     }
-    if(mode == 1)
+    else if(mode == 1)
     {
         switch(sel)
         {
@@ -123,11 +130,12 @@ uint16_t BittyProc::Evaluate(uint16_t instruction)
                 break;
         }
     }
-    registers[mux_sel1] = out;
+    
+    registers_[mux_sel1] = out;
     return out;
 }
 
 uint16_t BittyProc::GetRegister(int reg_num)
 {
-    return registers[reg_num];    
+    return registers_[reg_num];    
 }
