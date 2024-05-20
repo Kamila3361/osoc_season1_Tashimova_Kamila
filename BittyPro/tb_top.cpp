@@ -7,8 +7,7 @@
 #include "Vtop.h"
 #include "bitty_proc.h"
 
-#define MAX_SIM_TIME 100
-#define VERIF_START_TIME 0
+#define MAX_SIM_TIME 10000000
 vluint64_t sim_time = 0;
 
 BittyProc bittyProc;
@@ -29,13 +28,9 @@ public:
 
 AluInTx* generator()
 {
-    //if(rand() % 3 == 0){
     AluInTx* tx = new AluInTx();
     tx->inst = rand() % 32768;
     return tx;
-    //} else {
-      //  return nullptr;
-    //}
 }
 
 class AluDrv
@@ -66,11 +61,9 @@ public:
     void writeIn(AluInTx* tx)
     {
         in_q.push_back(tx);
-        std::cout<<"inst writing"<<std::endl;
     }
     void writeOut(AluOutTx* tx, int state)
     {
-        std::cout<<"writeout"<<std::endl;
         if(in_q.empty())
         {
             std::cout <<"Fatal Error in AluScb: empty AluInTx queue" << std::endl;
