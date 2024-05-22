@@ -1,3 +1,5 @@
+import "DPI-C" function void verification(input bit [15:0] alu_out, input bit [15:0] instruction);
+
 module verifBox(
     input wire clk,
     input wire [15:0] alu_out,
@@ -11,5 +13,4 @@ always @(posedge clk) begin
     end
 end
 
-import "DPI-C" function void verification(input bit [15:0] alu_out, input bit [15:0] instruction);
 endmodule

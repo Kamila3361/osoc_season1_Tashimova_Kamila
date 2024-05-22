@@ -7,6 +7,7 @@
 #include "Vtop__Dpi.h"
 
 BittyProc bittyProc;
+static bool kShouldTrace = false;
 
 extern "C" void verification(const svBitVecVal* alu_out, const svBitVecVal* instruction) 
 {
@@ -15,6 +16,12 @@ extern "C" void verification(const svBitVecVal* alu_out, const svBitVecVal* inst
     uint16_t out = bittyProc.Evaluate(instruction_val);
     uint16_t sel = (instruction_val >> 2) & 0b1111;
     uint16_t mode = (instruction_val >> 1) & 1;
+
+    if (kShouldTrace)
+    {
+        std::cout << "Instruction: " << std::hex << instruction_val
+            << "; Register Write Value: " << out << std::endl;
+    }
 
     if(out != alu_out_val)
     {
