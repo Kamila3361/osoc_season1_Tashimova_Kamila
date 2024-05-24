@@ -28,7 +28,7 @@ waveform.vcd: ./obj_dir/V$(MODULE)
 .stamp.verilate: $(MODULE).v tb_$(MODULE).cpp
 	@echo
 	@echo "### VERILATING ###"
-	verilator -Wall --trace -cc $(MODULE).v BittyProcessor.v alu.v controlunit.v mux.v Reg.v verifBox.v counter.v mem_instruction.v --exe tb_$(MODULE).cpp bitty_proc.cpp verification.cpp
+	verilator -Wall --trace -cc $(MODULE).v bitty_processor.v alu.v controlunit.v mux.v Reg.v verif_box.v counter.v mem_instruction.v --exe tb_$(MODULE).cpp bitty_proc.cpp verification.cpp
 	@touch .stamp.verilate
 
 .PHONY:lint
