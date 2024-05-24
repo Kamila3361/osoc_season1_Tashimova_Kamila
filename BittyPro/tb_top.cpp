@@ -7,7 +7,7 @@
 #include "Vtop.h"
 #include "bitty_proc.h"
 
-#define MAX_SIM_TIME 100
+#define MAX_SIM_TIME 10000
 vluint64_t sim_time = 0;
 
 void dut_reset (Vtop *dut, vluint64_t &sim_time){
