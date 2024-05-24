@@ -3,14 +3,15 @@ module top(
     input reset
 );
 
-wire [10:0] address;
-wire [15:0] instruction;
+wire [15:0] instruction, address, pgcounter;
 wire done;
 
-counter count (clk, reset, done, address);
+Reg pc (pgcounter, clk, done, reset, address);
 
-mem_instruction inst (reset, address, instruction);
+counter count (reset, done, address, pgcounter);
 
-BittyProcessor processor (instruction, clk, reset, done);
+mem_instruction inst (reset, address[10:0], instruction);
+
+bitty_processor processor (instruction, clk, reset, done);
 
 endmodule
