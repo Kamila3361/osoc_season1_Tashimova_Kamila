@@ -1,17 +1,17 @@
 module counter(
-    input clk,
     input reset,
     input enable,
-    output [10:0] new_address 
+    input [15:0] address,
+    output [15:0] new_address 
 );
 
-reg [10:0] counter;
+reg [15:0] counter;
 
-always @(posedge clk) begin 
+always @(*) begin 
     if (reset) 
-        counter <= 0;
+        counter = 0;
     else if (enable) 
-        counter <= counter + 1;
+        counter = address + 1;
 end
 
 assign new_address = counter;
