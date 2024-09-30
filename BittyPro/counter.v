@@ -7,7 +7,8 @@ module counter(
 
 reg [15:0] counter;
 
-always @(*) begin 
+always @(*) begin
+    counter = 0;
     if (reset) 
         counter = 0;
     else if (enable) 

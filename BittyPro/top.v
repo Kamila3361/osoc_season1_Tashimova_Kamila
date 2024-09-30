@@ -10,7 +10,7 @@ Reg pc (pgcounter, clk, done, reset, address);
 
 counter count (reset, done, address, pgcounter);
 
-mem_instruction inst (reset, address[10:0], instruction);
+mem_instruction inst (address[10:0], instruction);
 
 bitty_processor processor (instruction, clk, reset, done);
 

@@ -8,18 +8,15 @@ module bitty_processor(
 );
 
 wire [15:0] inst, reg0, reg1, reg2, reg3, reg4, reg5, reg6, reg7, regS, regC, mux_out;
-wire [3:0] sel;
-/* verilator lint_off UNUSED */
-wire cout, comp;
-/* verilator lint_on UNUSED */
-wire mode, S_enable, C_enable, inst_enable;
+wire [2:0] sel;
+wire S_enable, C_enable, inst_enable;
 wire [2:0] mux_sel;
 wire [7:0] reg_enable;
 wire [15:0] regCval;
 
 Reg Inst (instruction, clk, inst_enable, reset, inst);
 
-controlunit cu (inst, clk, reset, sel, mode, mux_sel, reg_enable, S_enable, C_enable, inst_enable, done);
+controlunit cu (inst, clk, reset, sel, mux_sel, reg_enable, S_enable, C_enable, inst_enable, done);
 
 mux mx (
     reg0,
@@ -36,7 +33,7 @@ mux mx (
 
 Reg RegS (mux_out, clk, S_enable, reset, regS);
 
-alu Alu (1'b0, regS, mux_out, sel, mode, cout, comp, regCval);
+alu Alu (regS, mux_out, sel, regCval);
 Reg RegC (regCval, clk, C_enable, reset, regC);
 
 //Verification
